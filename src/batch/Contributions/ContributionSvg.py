@@ -59,9 +59,11 @@ class YearContribution:
         self.__colors = ['#eee', '#c6e48b', '#7bc96f', '#239a3b', '#196127']
 
 class ContributionSvg:
-    def __init__(self, year_records, year):
-#    def __init__(self, db, year_records, year):
-#        self.__db = db
+#    def __init__(self, username, year_records, year):
+        #self.__username = username
+#    def __init__(self, year_records, year):
+    def __init__(self, db, year_records, year):
+        self.__db = db
         self.__year_records = year_records
         self.__year = year
     
@@ -69,7 +71,7 @@ class ContributionSvg:
     SVGファイルを作成する。1ユーザ1年毎に1ファイル。
     """
     def Create(self):
-        svg_base = '''<svg width="720" height="114" class="js-calendar-graph-svg">
+        svg_base = '''<svg xmlns="http://www.w3.org/2000/svg" width="720" height="114" class="js-calendar-graph-svg">
     <g transform="translate(16, 30)">
     </g>
 </svg>'''        
@@ -101,8 +103,8 @@ class ContributionSvg:
             targetDt = first_date + datetime.timedelta(days=(dayofweek - first_date_week))
 #            if self.__year < targetDt.year: continue
             if datetime.datetime.now() < targetDt: return (dom_week, None) # 未来の場合、次の日をNoneにして中断
-            #record = self.__db['Contributions'].find_one(Date="{0:%Y-%m-%d}".format(targetDt))
-            record = Db().Contributions['Contributions'].find_one(Date="{0:%Y-%m-%d}".format(targetDt))
+            record = self.__db['Contributions'].find_one(Date="{0:%Y-%m-%d}".format(targetDt))
+            #record = Db().Contributions['Contributions'].find_one(Date="{0:%Y-%m-%d}".format(targetDt))
             if None is record:
                 record = {}
                 record['Date'] = "{0:%Y-%m-%d}".format(targetDt)
@@ -177,7 +179,10 @@ class ContributionSvg:
     year: 対象の年(西暦)
     """
     def __GetOneYearContributionCount(self):
-        #records = self.__db.query('select SUM("Count") YearCount from "Contributions" where "Date" like "{year}-%"'.format(year=self.__year))
-        records = Db().Contributions.query('select SUM("Count") YearCount from "Contributions" where "Date" like "{year}-%"'.format(year=self.__year))
+        records = self.__db.query('select SUM("Count") YearCount from "Contributions" where "Date" like "{year}-%"'.format(year=self.__year))
+        #print(Db().Contributions, '**********')
+        #print(Db().Contributions[self.__username], '**********')
+        #print(Db().Contributions[self.__username].tables, '**********')
+        #records = Db().Contributions.query('select SUM("Count") YearCount from "Contributions" where "Date" like "{year}-%"'.format(year=self.__year))
         return records.next()['YearCount']
 

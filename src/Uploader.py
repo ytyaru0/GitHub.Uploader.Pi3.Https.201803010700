@@ -47,7 +47,7 @@ class Main:
             for a in Db().Accounts['Accounts'].find(): usernames.append(a['Username'])
             th = ContributionsThread(path_dir_db, usernames)
             th.start()
-
+        
         # アップローダ起動
         creator = web.service.github.api.v3.AuthenticationsCreator.AuthenticationsCreator(args.username)
         authentications = creator.Create()
@@ -64,6 +64,11 @@ class ContributionsThread(threading.Thread):
         import batch.Contributions.Main
         m = batch.Contributions.Main.Main(self.__path_dir_db)
         for username in self.__usernames: m.Run(username)
+        if Config()['Github']['Contributions']['IsMake']:
+            self.__create_svg()
+    def __create_svg(self):
+        from batch.Contributions.SvgCreator import SvgCreator
+        SvgCreator(Config()['Path']['Db']).Create()
 
 
 if __name__ == '__main__':

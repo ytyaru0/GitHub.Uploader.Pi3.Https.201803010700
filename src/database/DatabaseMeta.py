@@ -41,6 +41,9 @@ class DatabaseMeta(type):
             #setattr(cls, initer.DbId, property(lambda cls: initer.Db))
             #setattr(cls, initer.DbId, property(lambda cls: copy.copy(initer.Db)))
             #setattr(cls, initer.DbId, property(lambda cls: copy.deepcopy(initer.Db)))
+        for initer in [cls(accountsDb) for cls in [Contributions]]:
+            #initer.Initialize() # データ取得してしまう。将来的には外部ツール化すべき
+            setattr(cls, initer.DbId, initer.Db)
 
     # Singleton
     _instance = None

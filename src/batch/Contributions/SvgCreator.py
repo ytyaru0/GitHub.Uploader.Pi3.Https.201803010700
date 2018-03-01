@@ -1,10 +1,15 @@
 import dataset
 import os.path
 import sys
-import ContributionSvg
+#import ContributionSvg
+from batch.Contributions.ContributionSvg import ContributionSvg
+from setting.Config import Config
+from database.Database import Database as Db
+
 class SvgCreator:
     def __init__(self, path_dir_db, usernames=None):
-        self.__SetPathDirDb(path_dir_db)
+        #Config()['Path']['Db']
+        #self.__SetPathDirDb(path_dir_db)
         self.__SetUsernames(usernames)
 
     """
@@ -12,7 +17,7 @@ class SvgCreator:
     is_overwrite: ファイルが既存でも上書きするか否か。（Falseの場合で既存なら上書きせず終了）
     """    
     def Create(self, is_overwrite=False):
-        print(self.__path_dir_db)
+        #print(self.__path_dir_db)
         print(self.__usernames)
         for username in self.__usernames:
             db = self.__GetDb(username)
@@ -23,26 +28,36 @@ class SvgCreator:
                 if not is_overwrite and os.path.isfile(file_name): continue
                 print(year, records)
                 with open(file_name, mode='w', encoding='utf-8') as f:
-                    f.write(str(ContributionSvg.ContributionSvg(db, records, year).Create()))
+                    #f.write(str(ContributionSvg(username, records, year).Create()))
+                    #f.write(str(ContributionSvg(records, year).Create()))
+                    #f.write(str(ContributionSvg(db, records, year).Create()))
+                    f.write(str(ContributionSvg(db, records, year).Create()))
+                    #f.write(str(ContributionSvg.ContributionSvg(db, records, year).Create()))
     
     def __SetUsernames(self, usernames):
         if None is usernames:
+            """
             path_db_account = os.path.join(self.__path_dir_db, 'GitHub.Accounts.sqlite3')
             if not os.path.isfile(path_db_account): raise Exception('DBファイルが存在しません。:', path_db_account)
             db = dataset.connect('sqlite:///' + path_db_account)
             self.__usernames = []
             for record in db['Accounts'].find(): self.__usernames.append(record['Username'])
+            """
+            self.__usernames = [a['Username'] for a in Db().Accounts['Accounts'].find()]
         elif isinstance(usernames, str): self.__usernames = [usernames]
         elif isinstance(usernames, (list, tuple)): self.__usernames = usernames
         else: raise Exception('引数usernamesはstr,list,tupleのいずれかの型にしてください。')
+    """
     def __SetPathDirDb(self, path_dir_db):
         if path_dir_db.endswith('/'): self.__path_dir_db = path_dir_db[:-1]
         else: self.__path_dir_db = path_dir_db
         if not os.path.isdir(path_dir_db): raise Exception('引数path_dir_dbはDBが存在するディレクトリパスを指定してください。: {0}'.format(self.__path_dir_db))
+    """
     def __GetDbFilename(self, username): return "GitHub.Contributions.{0}.sqlite3".format(username)
     def __GetSvgFilename(self, username, year): return "GitHub.Contributions.{0}.{1}.svg".format(username, year)
     def __GetDb(self, username):
-        path = os.path.join(self.__path_dir_db, self.__GetDbFilename(username))
+        #path = os.path.join(self.__path_dir_db, self.__GetDbFilename(username))
+        path = os.path.join(Config()['Path']['Db'], self.__GetDbFilename(username))
         try: return dataset.connect('sqlite:///' + path)
         except: print('DBファイルを開けませんでした。:', path); raise;
 
