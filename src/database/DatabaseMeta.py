@@ -27,6 +27,7 @@ class DatabaseMeta(type):
             initer.Initialize()
             setattr(cls, initer.DbId, initer.Db)
             #setattr(cls, initer.DbId, property(lambda cls: initer.Db))
+            #setattr(cls, initer.DbId, property(lambda cls: copy.copy(initer.Db)))
             #setattr(cls, initer.DbId, property(lambda cls: copy.deepcopy(initer.Db)))
         
         if 0 == attrs['_{0}__Initializers'.format(name)]['Accounts'].Db['Accounts'].count(): raise Exception('登録ユーザがひとつもありません。UserRegister.pyで登録してから再実行してください。')
@@ -38,6 +39,7 @@ class DatabaseMeta(type):
             initer.Initialize()
             setattr(cls, initer.DbId, initer.Db)
             #setattr(cls, initer.DbId, property(lambda cls: initer.Db))
+            #setattr(cls, initer.DbId, property(lambda cls: copy.copy(initer.Db)))
             #setattr(cls, initer.DbId, property(lambda cls: copy.deepcopy(initer.Db)))
 
     # Singleton

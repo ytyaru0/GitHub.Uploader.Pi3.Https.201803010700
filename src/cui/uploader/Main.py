@@ -45,7 +45,6 @@ class Main:
         Log().Logger.info('リポジトリ情報は上記のとおりで間違いありませんか？[y/n]')
 
     def __Create(self):
-        print('xxxxxxxxxxx:', self.__repos)
         if os.path.exists(os.path.join(self.__args.path_dir_pj, ".git")):
             if self.__repos is None:
                 msg = "整合性エラー。 .git が存在するのにDBには存在しません。\nコピペで別の .git を使い回していませんか？\nまたは本ツールを使わずに .git を作成しませんでしたか？\n\n解法は2つあります。\n１．既存リモートリポジトリをDBに取り込む\n２．既存のローカルとリモートの両リポジトリを削除して本ツールでアップロードし直す（git履歴が消える）\n\n１はまず既存のAccountsDBを削除します。次にユーザ作成することで既存リモートリポジトリがDBに登録されます。それで整合性エラーが解決します。その後、再度Uploader.pyを再試行してください。"
